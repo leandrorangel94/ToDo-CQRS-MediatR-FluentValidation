@@ -25,6 +25,9 @@ public class CreateToDoCommandHandler : IRequestHandler<CreateToDoCommand, ToDoV
         var task = _mapper.Map<ToDoItem>(request);
         await _todoRepositorio.AddAsync(task);
 
-        return _mapper.Map<ToDoViewModel>(task);
+        var tasks = await _todoRepositorio.GetAllAsync();
+        var lastAddedTask = tasks.OrderByDescending(t => t.Id).FirstOrDefault();
+
+        return _mapper.Map<ToDoViewModel>(lastAddedTask);
     }
 }
