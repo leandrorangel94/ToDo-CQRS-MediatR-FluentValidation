@@ -9,17 +9,14 @@ namespace ToDo.Api.Controllers
 {
     [ApiController]
     [Route("api/v1/todo")]
-    public class ToDoController : ControllerBase
+    public class ToDoController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-        public ToDoController(IMediator mediator) => _mediator = mediator;
+        private readonly IMediator _mediator = mediator;
 
         [HttpGet]
         public async Task<ActionResult<IList<ToDoViewModel>>> Get()
         {
-            var result = await _mediator.Send(new GetAllQuery());
-
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetAllQuery()));
         }
 
         [Route("{id}")]
@@ -63,9 +60,6 @@ namespace ToDo.Api.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteToDo(int id)
         {
-            if (id == 0)
-                return BadRequest();
-
             await _mediator.Send(new RemoveToDoCommand { Id = id });
             return NoContent();
         }
