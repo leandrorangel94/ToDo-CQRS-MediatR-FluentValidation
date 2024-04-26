@@ -25,7 +25,12 @@ namespace ToDo.Application
             });
 
             services.AddAutoMapper(typeof(ToDoMappingProfile));
-            services.AddScoped<IToDoRepositorio, ToDoRepository>();
+            //services.AddScoped<IToDoRepositorio, ToDoRepository>();
+            services.AddScoped<IToDoRepositorio, ToDoRepositoryDapper>(provider =>
+            {
+                var connectionString = configuration.GetConnectionString("connectionString");
+                return new ToDoRepositoryDapper(connectionString);
+            });
             services.AddValidatorsFromAssemblies(
                     new List<Assembly>
                     {
